@@ -13,6 +13,12 @@ public partial class TaskDetailsView : UserControl {
     private readonly HourglassDbContext _db = new();
     public TaskItem TaskItem { get; }
 
+    /// <summary>
+    /// Automation ctor
+    /// </summary>
+    public TaskDetailsView() {
+        InitializeComponent();
+    }
     public TaskDetailsView(TaskItem task) {
         InitializeComponent();
         TaskItem = _db.Tasks.Include(t => t.WorkSessions).First(t => t.Id == task.Id);
@@ -66,17 +72,6 @@ public partial class TaskDetailsView : UserControl {
             if (dbSession != null) {
                 dbSession.EndDate = DateTime.Now;
                 _db.SaveChanges();
-
-                // Refresh from database using a fresh query to avoid duplication
-                var refreshedTask = _db.Tasks
-                    .Include(t => t.WorkSessions)
-                    .First(t => t.Id == TaskItem.Id);
-                
-                TaskItem.WorkSessions.Clear();
-                foreach (var ws in refreshedTask.WorkSessions) {
-                    TaskItem.WorkSessions.Add(ws);
-                }
-                
                 LoadTaskDetails();
             }
         }
@@ -100,16 +95,6 @@ public partial class TaskDetailsView : UserControl {
         _db.SaveChanges();
 
         DurationInput.SetText(string.Empty);
-
-        // Refresh from database using a fresh query to avoid duplication
-        var refreshedTask = _db.Tasks
-            .Include(t => t.WorkSessions)
-            .First(t => t.Id == TaskItem.Id);
-        
-        TaskItem.WorkSessions.Clear();
-        foreach (var ws in refreshedTask.WorkSessions) {
-            TaskItem.WorkSessions.Add(ws);
-        }
         
         LoadTaskDetails();
     }
