@@ -23,7 +23,14 @@ public partial class TasksView : UserControl {
     public TasksView(Story story) {
         InitializeComponent();
         Story = _db.Stories.Include(s => s.Tasks).ThenInclude(t => t.WorkSessions).First(s => s.Id == story.Id);
+        LoadStoryDetails();
         LoadTasks();
+    }
+
+    private void LoadStoryDetails() {
+        StoryName.Text = Story.Name;
+        StoryDescription.Text = Story.Description;
+        StoryLink.Text = !string.IsNullOrEmpty(Story.HyperLink) ? $"Link: {Story.HyperLink}" : string.Empty;
     }
 
     private void LoadTasks() {
@@ -72,5 +79,41 @@ public partial class TasksView : UserControl {
             var mainWindow = (MainWindow)this.VisualRoot!;
             mainWindow.NavigateToTaskDetails(task);
         }
+    }
+
+    private void EditStory_Click(object sender, RoutedEventArgs e) {
+        StoryNameEdit.Text = Story.Name;
+        StoryDescriptionEdit.Text = Story.Description;
+        StoryLinkEdit.Text = Story.HyperLink;
+
+        StoryDisplayPanel.IsVisible = false;
+        StoryEditPanel.IsVisible = true;
+    }
+
+    private void SaveStory_Click(object sender, RoutedEventArgs e) {
+        var name = StoryNameEdit.Text?.Trim();
+        if (string.IsNullOrEmpty(name)) return;
+
+        var dbStory = _db.Stories.Find(Story.Id);
+        if (dbStory != null) {
+            dbStory.Name = name;
+            dbStory.Description = StoryDescriptionEdit.Text?.Trim() ?? string.Empty;
+            dbStory.HyperLink = StoryLinkEdit.Text?.Trim() ?? string.Empty;
+            _db.SaveChanges();
+
+            Story.Name = dbStory.Name;
+            Story.Description = dbStory.Description;
+            Story.HyperLink = dbStory.HyperLink;
+
+            LoadStoryDetails();
+        }
+
+        StoryDisplayPanel.IsVisible = true;
+        StoryEditPanel.IsVisible = false;
+    }
+
+    private void CancelStoryEdit_Click(object sender, RoutedEventArgs e) {
+        StoryDisplayPanel.IsVisible = true;
+        StoryEditPanel.IsVisible = false;
     }
 }

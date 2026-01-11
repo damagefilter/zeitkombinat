@@ -79,7 +79,7 @@ public partial class TaskDetailsView : UserControl {
 
     private void AddCompletedSession_Click(object sender, RoutedEventArgs e) {
         var duration = DurationInput.Value;
-        
+
         if (duration.TotalSeconds <= 0) return;
 
         var endDate = DateTime.Now;
@@ -95,7 +95,46 @@ public partial class TaskDetailsView : UserControl {
         _db.SaveChanges();
 
         DurationInput.SetText(string.Empty);
-        
+
         LoadTaskDetails();
+    }
+
+    private void EditTask_Click(object sender, RoutedEventArgs e) {
+        TaskNameEdit.Text = TaskItem.Name;
+        TaskDescriptionEdit.Text = TaskItem.Description;
+        TaskLinkEdit.Text = TaskItem.HyperLink;
+        TaskEstimatedEdit.Value = TaskItem.EstimatedHours;
+
+        TaskDisplayPanel.IsVisible = false;
+        TaskEditPanel.IsVisible = true;
+    }
+
+    private void SaveTask_Click(object sender, RoutedEventArgs e) {
+        var name = TaskNameEdit.Text?.Trim();
+        if (string.IsNullOrEmpty(name)) return;
+
+        var dbTask = _db.Tasks.Find(TaskItem.Id);
+        if (dbTask != null) {
+            dbTask.Name = name;
+            dbTask.Description = TaskDescriptionEdit.Text?.Trim() ?? string.Empty;
+            dbTask.HyperLink = TaskLinkEdit.Text?.Trim() ?? string.Empty;
+            dbTask.EstimatedHours = TaskEstimatedEdit.Value;
+            _db.SaveChanges();
+
+            TaskItem.Name = dbTask.Name;
+            TaskItem.Description = dbTask.Description;
+            TaskItem.HyperLink = dbTask.HyperLink;
+            TaskItem.EstimatedHours = dbTask.EstimatedHours;
+
+            LoadTaskDetails();
+        }
+
+        TaskDisplayPanel.IsVisible = true;
+        TaskEditPanel.IsVisible = false;
+    }
+
+    private void CancelTaskEdit_Click(object sender, RoutedEventArgs e) {
+        TaskDisplayPanel.IsVisible = true;
+        TaskEditPanel.IsVisible = false;
     }
 }

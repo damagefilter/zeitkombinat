@@ -29,8 +29,15 @@ public partial class StoriesView : UserControl {
             .ThenInclude(s => s.Tasks)
             .ThenInclude(t => t.WorkSessions)
             .First(p => p.Id == currentProject.Id);
-        
+
+        LoadProjectDetails();
         LoadStories();
+    }
+
+    private void LoadProjectDetails() {
+        ProjectName.Text = Project.Name;
+        ProjectDescription.Text = Project.Description;
+        ProjectInvoiceMarker.Text = !string.IsNullOrEmpty(Project.InvoiceMarker) ? $"Invoice Marker: {Project.InvoiceMarker}" : string.Empty;
     }
 
     private void LoadStories() {
@@ -79,5 +86,41 @@ public partial class StoriesView : UserControl {
             var mainWindow = (MainWindow)this.VisualRoot!;
             mainWindow.NavigateToTasks(story);
         }
+    }
+
+    private void EditProject_Click(object sender, RoutedEventArgs e) {
+        ProjectNameEdit.Text = Project.Name;
+        ProjectDescriptionEdit.Text = Project.Description;
+        ProjectInvoiceMarkerEdit.Text = Project.InvoiceMarker;
+
+        ProjectDisplayPanel.IsVisible = false;
+        ProjectEditPanel.IsVisible = true;
+    }
+
+    private void SaveProject_Click(object sender, RoutedEventArgs e) {
+        var name = ProjectNameEdit.Text?.Trim();
+        if (string.IsNullOrEmpty(name)) return;
+
+        var dbProject = _db.Projects.Find(Project.Id);
+        if (dbProject != null) {
+            dbProject.Name = name;
+            dbProject.Description = ProjectDescriptionEdit.Text?.Trim() ?? string.Empty;
+            dbProject.InvoiceMarker = ProjectInvoiceMarkerEdit.Text?.Trim() ?? string.Empty;
+            _db.SaveChanges();
+
+            Project.Name = dbProject.Name;
+            Project.Description = dbProject.Description;
+            Project.InvoiceMarker = dbProject.InvoiceMarker;
+
+            LoadProjectDetails();
+        }
+
+        ProjectDisplayPanel.IsVisible = true;
+        ProjectEditPanel.IsVisible = false;
+    }
+
+    private void CancelProjectEdit_Click(object sender, RoutedEventArgs e) {
+        ProjectDisplayPanel.IsVisible = true;
+        ProjectEditPanel.IsVisible = false;
     }
 }

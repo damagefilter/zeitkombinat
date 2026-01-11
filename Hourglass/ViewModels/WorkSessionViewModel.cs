@@ -15,7 +15,8 @@ public class WorkSessionViewModel {
         get {
             if (Session.EndDate.HasValue) {
                 var duration = Session.EndDate.Value - Session.StartDate;
-                return $"{Session.StartDate:g} - {Session.EndDate:g} (Duration: {TimeSpanInput.FormatTimeSpan(duration)})";
+                string billed = Session.Billed ? "Billed" : "" ;
+                return $"{Session.StartDate:g} - {Session.EndDate:g} (Duration: {TimeSpanInput.FormatTimeSpan(duration)}{billed})";
             } 
             else {
                 var duration = DateTime.Now - Session.StartDate;

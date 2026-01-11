@@ -7,7 +7,9 @@ namespace Hourglass.Controls;
 
 public partial class TimeSpanInput : UserControl {
     public static readonly StyledProperty<TimeSpan> ValueProperty =
-        AvaloniaProperty.Register<TimeSpanInput, TimeSpan>(nameof(Value));
+        AvaloniaProperty.Register<TimeSpanInput, TimeSpan>(nameof(Value), defaultValue: TimeSpan.Zero, coerce: CoerceValue);
+
+    private bool _isUpdatingFromCode = false;
 
     public TimeSpan Value {
         get => GetValue(ValueProperty);
@@ -16,11 +18,33 @@ public partial class TimeSpanInput : UserControl {
 
     public TimeSpanInput() {
         InitializeComponent();
+        ValueProperty.Changed.AddClassHandler<TimeSpanInput>(OnValueChanged);
+    }
+
+    private static TimeSpan CoerceValue(AvaloniaObject sender, TimeSpan value) {
+        return value < TimeSpan.Zero ? TimeSpan.Zero : value;
+    }
+
+    private static void OnValueChanged(TimeSpanInput control, AvaloniaPropertyChangedEventArgs e) {
+        if (control._isUpdatingFromCode) return;
+
+        var newValue = (TimeSpan)e.NewValue;
+        control._isUpdatingFromCode = true;
+        control.InputBox.Text = FormatTimeSpan(newValue);
+        control._isUpdatingFromCode = false;
+    }
+
+    public void ForceValue(TimeSpan value) {
+        Value = value;
     }
 
     private void InputBox_TextChanged(object sender, TextChangedEventArgs e) {
+        if (_isUpdatingFromCode) return;
+
         var text = InputBox.Text?.Trim() ?? string.Empty;
+        _isUpdatingFromCode = true;
         Value = ParseTimeSpan(text);
+        _isUpdatingFromCode = false;
     }
 
     public void SetText(string text) {
