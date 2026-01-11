@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Hourglass.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hourglass;
 
@@ -13,7 +14,7 @@ public partial class App : Application {
 
     private void InitializeDatabase() {
         using var db = new HourglassDbContext();
-        db.Database.EnsureCreated();
+        db.Database.Migrate(); // Ensure we have everything and schema is up to date
     }
 
     public override void OnFrameworkInitializationCompleted() {

@@ -18,9 +18,12 @@ public partial class TaskDetailsView : UserControl {
     /// </summary>
     public TaskDetailsView() {
         InitializeComponent();
+        TaskItem = new TaskItem();
     }
     public TaskDetailsView(TaskItem task) {
         InitializeComponent();
+        // This might already be fully loaded.
+        // But so far performance is fine the way it is and this is safer.
         TaskItem = _db.Tasks.Include(t => t.WorkSessions).First(t => t.Id == task.Id);
         LoadTaskDetails();
     }

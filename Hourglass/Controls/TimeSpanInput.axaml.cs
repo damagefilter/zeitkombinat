@@ -28,14 +28,10 @@ public partial class TimeSpanInput : UserControl {
     private static void OnValueChanged(TimeSpanInput control, AvaloniaPropertyChangedEventArgs e) {
         if (control._isUpdatingFromCode) return;
 
-        var newValue = (TimeSpan)e.NewValue;
+        var newValue = (TimeSpan)(e.NewValue ?? TimeSpan.Zero);
         control._isUpdatingFromCode = true;
         control.InputBox.Text = FormatTimeSpan(newValue);
         control._isUpdatingFromCode = false;
-    }
-
-    public void ForceValue(TimeSpan value) {
-        Value = value;
     }
 
     private void InputBox_TextChanged(object sender, TextChangedEventArgs e) {

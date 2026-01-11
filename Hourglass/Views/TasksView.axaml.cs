@@ -18,10 +18,12 @@ public partial class TasksView : UserControl {
     /// </summary>
     public TasksView() {
         InitializeComponent();
+        Story = new Story();
     }
     
     public TasksView(Story story) {
         InitializeComponent();
+        // Story = story;
         Story = _db.Stories.Include(s => s.Tasks).ThenInclude(t => t.WorkSessions).First(s => s.Id == story.Id);
         LoadStoryDetails();
         LoadTasks();

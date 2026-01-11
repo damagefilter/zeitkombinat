@@ -60,4 +60,11 @@ public partial class ProjectsView : UserControl {
             LoadProjects();
         }
     }
+
+    private void CreateInvoice_Click(object sender, RoutedEventArgs e) {
+        if (sender is Button button && button.Tag is Project project) {
+            var mainWindow = (MainWindow)this.VisualRoot!;
+            mainWindow.NavigateToCreateInvoice(project);
+        }
+    }
 }

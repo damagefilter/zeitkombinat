@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Hourglass.Controls;
 using Hourglass.Models;
 using Hourglass.Views;
 
@@ -35,6 +37,21 @@ public partial class MainWindow : Window {
         PushView(view, $"Task: {task.Name}");
     }
 
+    public void NavigateToCreateInvoice(Project project) {
+        var view = new CreateInvoiceView(project);
+        PushView(view, $"Create Invoice: {project.Name}");
+    }
+
+    public async Task<bool> ShowMessage(string message, string title = "Message", bool showCancel = false) {
+        var dialog = MessageDialog.CreateMessage(message, title, showCancel);
+        await dialog.ShowDialog(this);
+        return dialog.Result;
+    }
+
+    public void NavigateBack() {
+        BackButton_Click(this, new RoutedEventArgs());
+    }
+
     private void PushView(UserControl view, string title) {
         _navigationStack.Push(view);
         MainContent.Content = view;
@@ -54,6 +71,7 @@ public partial class MainWindow : Window {
             else if (view is StoriesView sv) TitleTextBlock.Text = $"Stories: {sv.Project.Name}";
             else if (view is TasksView tv) TitleTextBlock.Text = $"Tasks: {tv.Story.Name}";
             else if (view is TaskDetailsView tdv) TitleTextBlock.Text = $"Task: {tdv.TaskItem.Name}";
+            else if (view is CreateInvoiceView) TitleTextBlock.Text = "Create Invoice";
         }
     }
 }

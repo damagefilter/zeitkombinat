@@ -12,23 +12,22 @@ namespace Hourglass.Views;
 public partial class StoriesView : UserControl {
     private readonly HourglassDbContext _db = new();
     public Project Project { get; }
-    private readonly Project currentProject;
 
     /// <summary>
     /// This is a constructor to make this view accessible for some automated and helpy systems
     /// </summary>
     public StoriesView() {
         InitializeComponent();
+        Project = new Project();
     }
     
     public StoriesView(Project project) {
         InitializeComponent();
-        currentProject = project;
         Project = _db.Projects
             .Include(p => p.Stories)
             .ThenInclude(s => s.Tasks)
             .ThenInclude(t => t.WorkSessions)
-            .First(p => p.Id == currentProject.Id);
+            .First(p => p.Id == project.Id);
 
         LoadProjectDetails();
         LoadStories();
@@ -60,7 +59,7 @@ public partial class StoriesView : UserControl {
             ProjectId = Project.Id
         };
 
-        currentProject.Stories.Add(story);
+        Project.Stories.Add(story);
         _db.Stories.Add(story);
         _db.SaveChanges();
 
