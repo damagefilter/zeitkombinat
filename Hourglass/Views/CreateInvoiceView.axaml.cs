@@ -99,16 +99,6 @@ public partial class CreateInvoiceView : UserControl {
         var now = DateTime.Now;
         var billingId = GenerateBillingId(project.InvoiceMarker, now);
 
-        var invoice = new Invoice {
-            BillingId = billingId,
-            CreationDate = now,
-            HourlyRate = hourlyRate,
-            ProjectId = project.Id
-        };
-
-        db.Invoices.Add(invoice);
-        db.SaveChanges();
-
         var csvLines = new List<string> {
             $"Invoice ID:,{billingId}",
             $"Date:,{now:yyyy-MM-dd}",
@@ -119,6 +109,16 @@ public partial class CreateInvoiceView : UserControl {
 
         decimal grandTotal = 0;
         decimal grandTotalHours = 0;
+
+        var invoice = new Invoice {
+            BillingId = billingId,
+            CreationDate = now,
+            HourlyRate = hourlyRate,
+            ProjectId = project.Id
+        };
+
+        db.Invoices.Add(invoice);
+        db.SaveChanges();
 
         foreach (var taskVm in selectedTasks) {
             var task = taskVm.Task;
@@ -149,9 +149,10 @@ public partial class CreateInvoiceView : UserControl {
         }
 
         csvLines.Add("");
-        
+
         csvLines.Add(string.Create(CultureInfo.InvariantCulture, $"Total:,,{grandTotalHours:F2},,{grandTotal:F2}"));
 
+        invoice.TotalAmount = grandTotal;
         db.SaveChanges();
 
         var fileName = $"{billingId}.csv";

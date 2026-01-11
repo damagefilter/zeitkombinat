@@ -51,8 +51,12 @@
             </Grid>
         </StackPanel>
 
-        <ScrollViewer>
-            <ItemsControl Name="StoriesList">
+        <Grid ColumnDefinitions="*,*">
+            <!-- Stories Column -->
+            <ScrollViewer Grid.Column="0" Margin="0,0,10,0">
+                <StackPanel>
+                    <TextBlock Text="Stories" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <ItemsControl Name="StoriesList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="vm:StoryViewModel">
                         <Border BorderThickness="1" Margin="0,5" Padding="10">
@@ -70,6 +74,33 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </ScrollViewer>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Invoices Column -->
+            <ScrollViewer Grid.Column="1" Margin="10,0,0,0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Invoices" FontSize="16" FontWeight="Bold" Margin="0,0,15,10"/>
+                        <Button Content="Create Invoice" Click="CreateInvoice_Click" Margin="0,0,0,10"/>
+                    </StackPanel>
+                    
+                    <ItemsControl Name="InvoicesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="vm:InvoiceViewModel">
+                                <Border BorderThickness="1" Margin="0,5" Padding="10">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding BillingId}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding CreationDateText}" Margin="0,5,0,0"/>
+                                        <TextBlock Text="{Binding HourlyRateText}" Margin="0,5,0,0"/>
+                                        <TextBlock Text="{Binding TotalAmountText}" FontWeight="Bold" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </DockPanel>
 </UserControl>

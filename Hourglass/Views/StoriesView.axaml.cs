@@ -31,6 +31,7 @@ public partial class StoriesView : UserControl {
 
         LoadProjectDetails();
         LoadStories();
+        LoadInvoices();
     }
 
     private void LoadProjectDetails() {
@@ -41,6 +42,15 @@ public partial class StoriesView : UserControl {
 
     private void LoadStories() {
         StoriesList.ItemsSource = Project.Stories.Select(s => new StoryViewModel(s)).ToList();
+    }
+
+    private void LoadInvoices() {
+        var invoices = _db.Invoices
+            .Where(i => i.ProjectId == Project.Id)
+            .OrderByDescending(i => i.CreationDate)
+            .ToList();
+
+        InvoicesList.ItemsSource = invoices.Select(i => new InvoiceViewModel(i)).ToList();
     }
 
     private void AddStory_Click(object sender, RoutedEventArgs e) {
@@ -121,5 +131,10 @@ public partial class StoriesView : UserControl {
     private void CancelProjectEdit_Click(object sender, RoutedEventArgs e) {
         ProjectDisplayPanel.IsVisible = true;
         ProjectEditPanel.IsVisible = false;
+    }
+
+    private void CreateInvoice_Click(object sender, RoutedEventArgs e) {
+        var mainWindow = (MainWindow)this.VisualRoot!;
+        mainWindow.NavigateToCreateInvoice(Project);
     }
 }
