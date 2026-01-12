@@ -61,10 +61,15 @@
                     <DataTemplate DataType="vm:TaskViewModel">
                         <Border BorderThickness="1" Margin="0,5" Padding="10">
                             <StackPanel>
-                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding Name}" Classes="h2"/>
                                 <TextBlock Text="{Binding Description}" Margin="0,5,0,0"/>
                                 <TextBlock Text="{Binding LinkText}" IsVisible="{Binding HasLink}"/>
-                                <TextBlock Text="{Binding HoursText}" Margin="0,5,0,0"/>
+                                <TextBlock Margin="0,5,0,0" Classes="sub" IsVisible="{Binding HasOpenSessions}">
+                                    <Run Text="{Binding HoursText}" />
+                                    <Run Text=" - Open Sessions: " Classes="warning" />
+                                    <Run Text="{Binding OpenSessionsDuration}" Classes="warning"/>
+                                </TextBlock>
+                                <TextBlock Text="{Binding HoursText}" Margin="0,5,0,0" Classes="sub" IsVisible="{Binding !HasOpenSessions}" />
                                 <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                                     <Button Content="View Details" Click="ViewTaskDetails_Click" Tag="{Binding Task}" HorizontalAlignment="Left"/>
                                     <Button Content="Delete" Click="DeleteTask_Click" Tag="{Binding Task}" HorizontalAlignment="Left"/>

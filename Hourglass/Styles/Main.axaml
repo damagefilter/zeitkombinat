@@ -1,0 +1,53 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+            <StackPanel>
+                <TextBlock Classes="h1">Header 1</TextBlock>
+                <TextBlock Classes="h2">Header 2</TextBlock>
+                <TextBlock Classes="h3">Header 3</TextBlock>
+                <TextBlock Classes="sub">Sub Text</TextBlock>
+                <TextBlock>Standard Text</TextBlock>
+            </StackPanel>
+            
+            
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+    <Style Selector="Window">
+        <Setter Property="Background" Value="#3a3a4a"/>
+    </Style>
+    
+    <Style Selector="TextBlock">
+        <Setter Property="Foreground" Value="#AAA699"/>
+    </Style>
+    
+    <Style Selector="TextBlock.warning">
+        <Setter Property="Foreground" Value="#AA443B"/>
+    </Style>
+    
+    <Style Selector="Run.warning">
+        <Setter Property="Foreground" Value="#AA443B"/>
+    </Style>
+    
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    <Style Selector="TextBlock.h2">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="LightSlateGray"/>
+    </Style>
+    <Style Selector="TextBlock.h3">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="LightSlateGray"/>
+    </Style>
+    <Style Selector="TextBlock.sub">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="LightSlateGray"/>
+    </Style>
+</Styles>

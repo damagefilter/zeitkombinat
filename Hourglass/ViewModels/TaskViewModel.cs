@@ -16,6 +16,22 @@ public class TaskViewModel {
     public string Description => Task.Description;
     public string LinkText => !string.IsNullOrEmpty(Task.HyperLink) ? $"Link: {Task.HyperLink}" : string.Empty;
     public bool HasLink => !string.IsNullOrEmpty(Task.HyperLink);
+    public bool HasOpenSessions => Task.WorkSessions.Any(x => !x.EndDate.HasValue);
+    
+    public string OpenSessionsDuration {
+        get {
+            DateTime now = DateTime.Now;
+            
+            double hours = Task.WorkSessions.Sum(x => {
+                if (!x.EndDate.HasValue) {
+                    return (now - x.StartDate).TotalHours;
+                }
+
+                return 0;
+            });
+            return TimeSpanInput.FormatTimeSpan(TimeSpan.FromHours(hours));
+        }
+    }
 
     public string HoursText {
         get {

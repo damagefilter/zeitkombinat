@@ -85,13 +85,13 @@ public partial class CreateInvoiceView : UserControl {
         var mainWindow = (MainWindow)this.VisualRoot!;
         
         if (!decimal.TryParse(HourlyRateInput.Text, out var hourlyRate) || hourlyRate <= 0) {
-            mainWindow.ShowMessage($"Specify an hourly rate first");
+            mainWindow.ShowDialogNoWait($"Specify an hourly rate first");
             return;
         }
 
         var selectedTasks = allTasks.Where(vm => vm.IsSelected).ToList();
         if (selectedTasks.Count == 0) {
-            mainWindow.ShowMessage($"Select tasks to be billed first.");
+            mainWindow.ShowDialogNoWait($"Select tasks to be billed first.");
             return;
         }
 
@@ -165,7 +165,7 @@ public partial class CreateInvoiceView : UserControl {
 
         File.WriteAllLines(fileName, csvLines);
 
-        mainWindow.ShowMessage($"Invoice created successfully! File saved as: {fileName}");
+        mainWindow.ShowDialogNoWait($"Invoice created successfully! File saved as: {fileName}");
     }
 
     private string GenerateBillingId(string invoiceMarker, DateTime date) {

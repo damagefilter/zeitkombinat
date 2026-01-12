@@ -42,10 +42,15 @@ public partial class MainWindow : Window {
         PushView(view, $"Create Invoice: {project.Name}");
     }
 
-    public async Task<bool> ShowMessage(string message, string title = "Message", bool showCancel = false) {
+    public async Task<bool> ShowDialog(string message, string title = "Message", bool showCancel = false) {
         var dialog = MessageDialog.CreateMessage(message, title, showCancel);
         await dialog.ShowDialog(this);
         return dialog.Result;
+    }
+    
+    public async void ShowDialogNoWait(string message, string title = "Message", bool showCancel = false) {
+        var dialog = MessageDialog.CreateMessage(message, title, showCancel);
+        await dialog.ShowDialog(this);
     }
 
     public void NavigateBack() {
