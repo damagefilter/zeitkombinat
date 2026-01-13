@@ -4,14 +4,12 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.EntityFrameworkCore;
 using Hourglass.Controls;
-using Hourglass.Data;
 using Hourglass.Models;
 
 namespace Hourglass.Views;
 
-public partial class TaskDetailsView : UserControl {
-    private readonly HourglassDbContext _db = new();
-    public TaskItem TaskItem { get; }
+public partial class TaskDetailsView : HourglassControl {
+    public TaskItem TaskItem { get; private set; }
 
     /// <summary>
     /// Automation ctor
@@ -24,11 +22,17 @@ public partial class TaskDetailsView : UserControl {
         InitializeComponent();
         // This might already be fully loaded.
         // But so far performance is fine the way it is and this is safer.
-        TaskItem = _db.Tasks.Include(t => t.WorkSessions).First(t => t.Id == task.Id);
+        TaskItem = task;
         LoadTaskDetails();
     }
 
     private void LoadTaskDetails() {
+        TaskItem = db.Tasks
+            .Include(t => t.WorkSessions)
+            .Include(t => t.Story)
+            .ThenInclude(s => s.Project)
+            .First(t => t.Id == TaskItem.Id);
+        
         TaskTitle.Text = TaskItem.Name;
         TaskDescription.Text = TaskItem.Description;
         TaskLink.Text = !string.IsNullOrEmpty(TaskItem.HyperLink) ? $"Link: {TaskItem.HyperLink}" : string.Empty;
@@ -54,16 +58,15 @@ public partial class TaskDetailsView : UserControl {
         };
 
         TaskItem.WorkSessions.Add(session);
-        _db.WorkSessions.Add(session);
-        _db.SaveChanges();
+        db.WorkSessions.Add(session);
+        db.SaveChanges();
         LoadSessions();
     }
 
     private void DeleteSession_Click(object sender, RoutedEventArgs e) {
         if (sender is Button button && button.Tag is WorkSession session) {
-            _db.WorkSessions.Remove(session);
-            _db.SaveChanges();
-
+            db.WorkSessions.Remove(session);
+            db.SaveChanges();
             TaskItem.WorkSessions.Remove(session);
             LoadTaskDetails();
         }
@@ -71,10 +74,10 @@ public partial class TaskDetailsView : UserControl {
 
     private void CloseSession_Click(object sender, RoutedEventArgs e) {
         if (sender is Button button && button.Tag is WorkSession session) {
-            var dbSession = _db.WorkSessions.Find(session.Id);
+            var dbSession = db.WorkSessions.Find(session.Id);
             if (dbSession != null) {
                 dbSession.EndDate = DateTime.Now;
-                _db.SaveChanges();
+                db.SaveChanges();
                 LoadTaskDetails();
             }
         }
@@ -94,8 +97,8 @@ public partial class TaskDetailsView : UserControl {
             TaskItemId = TaskItem.Id
         };
 
-        _db.WorkSessions.Add(session);
-        _db.SaveChanges();
+        db.WorkSessions.Add(session);
+        db.SaveChanges();
 
         DurationInput.SetText(string.Empty);
 
@@ -116,13 +119,13 @@ public partial class TaskDetailsView : UserControl {
         var name = TaskNameEdit.Text?.Trim();
         if (string.IsNullOrEmpty(name)) return;
 
-        var dbTask = _db.Tasks.Find(TaskItem.Id);
+        var dbTask = db.Tasks.Find(TaskItem.Id);
         if (dbTask != null) {
             dbTask.Name = name;
             dbTask.Description = TaskDescriptionEdit.Text?.Trim() ?? string.Empty;
             dbTask.HyperLink = TaskLinkEdit.Text?.Trim() ?? string.Empty;
             dbTask.EstimatedHours = TaskEstimatedEdit.Value;
-            _db.SaveChanges();
+            db.SaveChanges();
 
             TaskItem.Name = dbTask.Name;
             TaskItem.Description = dbTask.Description;
@@ -139,5 +142,12 @@ public partial class TaskDetailsView : UserControl {
     private void CancelTaskEdit_Click(object sender, RoutedEventArgs e) {
         TaskDisplayPanel.IsVisible = true;
         TaskEditPanel.IsVisible = false;
+    }
+
+    public override string ViewTitle => $"Work Sessions for {TaskItem.Name} in {TaskItem.Story.Name} of {TaskItem.Story.Project.Name}";
+
+    public override void OnBecameActive() {
+        base.OnBecameActive();
+        LoadTaskDetails();
     }
 }

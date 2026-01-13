@@ -2,16 +2,13 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.EntityFrameworkCore;
-using Hourglass.Controls;
-using Hourglass.Data;
 using Hourglass.Models;
 using Hourglass.ViewModels;
 
 namespace Hourglass.Views;
 
-public partial class TasksView : UserControl {
-    private readonly HourglassDbContext _db = new();
-    public Story Story { get; }
+public partial class TasksView : HourglassControl {
+    public Story Story { get; private set; }
 
     /// <summary>
     /// This is a constructor to make this view accessible for some automated and helpy systems
@@ -23,16 +20,25 @@ public partial class TasksView : UserControl {
     
     public TasksView(Story story) {
         InitializeComponent();
-        // Story = story;
-        Story = _db.Stories.Include(s => s.Tasks).ThenInclude(t => t.WorkSessions).First(s => s.Id == story.Id);
+        Story = story;
         LoadStoryDetails();
         LoadTasks();
     }
 
     private void LoadStoryDetails() {
+        RefreshStoryData();
+        
         StoryName.Text = Story.Name;
         StoryDescription.Text = Story.Description;
         StoryLink.Text = !string.IsNullOrEmpty(Story.HyperLink) ? $"Link: {Story.HyperLink}" : string.Empty;
+    }
+
+    private void RefreshStoryData() {
+        Story = db.Stories
+            .Include(s => s.Project)
+            .Include(s => s.Tasks)
+            .ThenInclude(t => t.WorkSessions)
+            .First(s => s.Id == Story.Id);
     }
 
     private void LoadTasks() {
@@ -55,8 +61,8 @@ public partial class TasksView : UserControl {
         };
 
         Story.Tasks.Add(task);
-        _db.Tasks.Add(task);
-        _db.SaveChanges();
+        db.Tasks.Add(task);
+        db.SaveChanges();
 
         TaskNameInput.Text = string.Empty;
         DescriptionInput.Text = string.Empty;
@@ -68,8 +74,8 @@ public partial class TasksView : UserControl {
 
     private void DeleteTask_Click(object sender, RoutedEventArgs e) {
         if (sender is Button button && button.Tag is TaskItem task) {
-            _db.Tasks.Remove(task);
-            _db.SaveChanges();
+            db.Tasks.Remove(task);
+            db.SaveChanges();
 
             Story.Tasks.Remove(task);
             LoadTasks();
@@ -96,12 +102,12 @@ public partial class TasksView : UserControl {
         var name = StoryNameEdit.Text?.Trim();
         if (string.IsNullOrEmpty(name)) return;
 
-        var dbStory = _db.Stories.Find(Story.Id);
+        var dbStory = db.Stories.Find(Story.Id);
         if (dbStory != null) {
             dbStory.Name = name;
             dbStory.Description = StoryDescriptionEdit.Text?.Trim() ?? string.Empty;
             dbStory.HyperLink = StoryLinkEdit.Text?.Trim() ?? string.Empty;
-            _db.SaveChanges();
+            db.SaveChanges();
 
             Story.Name = dbStory.Name;
             Story.Description = dbStory.Description;
@@ -117,5 +123,14 @@ public partial class TasksView : UserControl {
     private void CancelStoryEdit_Click(object sender, RoutedEventArgs e) {
         StoryDisplayPanel.IsVisible = true;
         StoryEditPanel.IsVisible = false;
+    }
+
+    public override string ViewTitle => $"Story {Story.Name} in {Story.Project.Name}";
+
+    public override void OnBecameActive() {
+        base.OnBecameActive();
+        RefreshStoryData();
+        LoadStoryDetails();
+        LoadTasks();
     }
 }

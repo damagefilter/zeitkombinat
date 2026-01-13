@@ -7,14 +7,12 @@ using System.Text.RegularExpressions;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.EntityFrameworkCore;
-using Hourglass.Data;
 using Hourglass.Models;
 using Hourglass.ViewModels;
 
 namespace Hourglass.Views;
 
-public partial class CreateInvoiceView : UserControl {
-    private readonly HourglassDbContext db = new();
+public partial class CreateInvoiceView : HourglassControl {
     private readonly Project project;
     private List<InvoiceTaskItemViewModel> allTasks = new();
 
@@ -194,5 +192,12 @@ public partial class CreateInvoiceView : UserControl {
     private void Cancel_Click(object sender, RoutedEventArgs e) {
         var mainWindow = (MainWindow)this.VisualRoot!;
         mainWindow.NavigateBack();
+    }
+
+    public override string ViewTitle => $"Create Invoices for {project.Name}";
+
+    public override void OnBecameActive() {
+        base.OnBecameActive();
+        LoadTasks();
     }
 }

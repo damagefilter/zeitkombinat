@@ -9,7 +9,7 @@ using Hourglass.Views;
 namespace Hourglass;
 
 public partial class MainWindow : Window {
-    private readonly Stack<UserControl> _navigationStack = new();
+    private readonly Stack<HourglassControl> _navigationStack = new();
 
     public MainWindow() {
         InitializeComponent();
@@ -19,27 +19,27 @@ public partial class MainWindow : Window {
     public void NavigateToProjects() {
         _navigationStack.Clear();
         var view = new ProjectsView();
-        PushView(view, "Projects");
+        PushView(view);
     }
 
     public void NavigateToStories(Project project) {
         var view = new StoriesView(project);
-        PushView(view, $"Stories: {project.Name}");
+        PushView(view);
     }
 
     public void NavigateToTasks(Story story) {
         var view = new TasksView(story);
-        PushView(view, $"Tasks: {story.Name}");
+        PushView(view);
     }
 
     public void NavigateToTaskDetails(TaskItem task) {
         var view = new TaskDetailsView(task);
-        PushView(view, $"Task: {task.Name}");
+        PushView(view);
     }
 
     public void NavigateToCreateInvoice(Project project) {
         var view = new CreateInvoiceView(project);
-        PushView(view, $"Create Invoice: {project.Name}");
+        PushView(view);
     }
 
     public async Task<bool> ShowDialog(string message, string title = "Message", bool showCancel = false) {
@@ -57,10 +57,10 @@ public partial class MainWindow : Window {
         BackButton_Click(this, new RoutedEventArgs());
     }
 
-    private void PushView(UserControl view, string title) {
+    private void PushView(HourglassControl view) {
         _navigationStack.Push(view);
         MainContent.Content = view;
-        TitleTextBlock.Text = title;
+        TitleTextBlock.Text = view.ViewTitle;
         BackButton.IsVisible = _navigationStack.Count > 1;
     }
 
@@ -70,13 +70,8 @@ public partial class MainWindow : Window {
             var view = _navigationStack.Peek();
             MainContent.Content = view;
             BackButton.IsVisible = _navigationStack.Count > 1;
-            
-            // Restore title
-            if (view is ProjectsView) TitleTextBlock.Text = "Projects";
-            else if (view is StoriesView sv) TitleTextBlock.Text = $"Stories: {sv.Project.Name}";
-            else if (view is TasksView tv) TitleTextBlock.Text = $"Tasks: {tv.Story.Name}";
-            else if (view is TaskDetailsView tdv) TitleTextBlock.Text = $"Task: {tdv.TaskItem.Name}";
-            else if (view is CreateInvoiceView) TitleTextBlock.Text = "Create Invoice";
+            view.OnBecameActive();
+            TitleTextBlock.Text = view.ViewTitle;
         }
     }
 }

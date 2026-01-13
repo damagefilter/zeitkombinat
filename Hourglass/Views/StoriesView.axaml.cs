@@ -3,15 +3,13 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.EntityFrameworkCore;
-using Hourglass.Data;
 using Hourglass.Models;
 using Hourglass.ViewModels;
 
 namespace Hourglass.Views;
 
-public partial class StoriesView : UserControl {
-    private readonly HourglassDbContext _db = new();
-    public Project Project { get; }
+public partial class StoriesView : HourglassControl {
+    public Project Project { get; private set; }
 
     /// <summary>
     /// This is a constructor to make this view accessible for some automated and helpy systems
@@ -23,15 +21,17 @@ public partial class StoriesView : UserControl {
     
     public StoriesView(Project project) {
         InitializeComponent();
-        Project = _db.Projects
+        Project = project;
+        RefreshProjectData();
+        LoadAllData();
+    }
+
+    private void RefreshProjectData() {
+        Project = db.Projects
             .Include(p => p.Stories)
             .ThenInclude(s => s.Tasks)
             .ThenInclude(t => t.WorkSessions)
-            .First(p => p.Id == project.Id);
-
-        LoadProjectDetails();
-        LoadStories();
-        LoadInvoices();
+            .First(p => p.Id == Project.Id);
     }
 
     private void LoadProjectDetails() {
@@ -45,7 +45,7 @@ public partial class StoriesView : UserControl {
     }
 
     private void LoadInvoices() {
-        var invoices = _db.Invoices
+        var invoices = db.Invoices
             .Where(i => i.ProjectId == Project.Id)
             .OrderByDescending(i => i.CreationDate)
             .ToList();
@@ -70,8 +70,8 @@ public partial class StoriesView : UserControl {
         };
 
         Project.Stories.Add(story);
-        _db.Stories.Add(story);
-        _db.SaveChanges();
+        db.Stories.Add(story);
+        db.SaveChanges();
 
         StoryNameInput.Text = string.Empty;
         DescriptionInput.Text = string.Empty;
@@ -82,8 +82,8 @@ public partial class StoriesView : UserControl {
 
     private void DeleteStory_Click(object sender, RoutedEventArgs e) {
         if (sender is Button button && button.Tag is Story story) {
-            _db.Stories.Remove(story);
-            _db.SaveChanges();
+            db.Stories.Remove(story);
+            db.SaveChanges();
 
             Project.Stories.Remove(story);
             LoadStories();
@@ -110,12 +110,12 @@ public partial class StoriesView : UserControl {
         var name = ProjectNameEdit.Text?.Trim();
         if (string.IsNullOrEmpty(name)) return;
 
-        var dbProject = _db.Projects.Find(Project.Id);
+        var dbProject = db.Projects.Find(Project.Id);
         if (dbProject != null) {
             dbProject.Name = name;
             dbProject.Description = ProjectDescriptionEdit.Text?.Trim() ?? string.Empty;
             dbProject.InvoiceMarker = ProjectInvoiceMarkerEdit.Text?.Trim() ?? string.Empty;
-            _db.SaveChanges();
+            db.SaveChanges();
 
             Project.Name = dbProject.Name;
             Project.Description = dbProject.Description;
@@ -136,5 +136,19 @@ public partial class StoriesView : UserControl {
     private void CreateInvoice_Click(object sender, RoutedEventArgs e) {
         var mainWindow = (MainWindow)this.VisualRoot!;
         mainWindow.NavigateToCreateInvoice(Project);
+    }
+
+    public override string ViewTitle => $"Project {Project.Name}";
+
+    public override void OnBecameActive() {
+        base.OnBecameActive();
+        LoadAllData();
+    }
+
+    private void LoadAllData() {
+        RefreshProjectData();
+        LoadProjectDetails();
+        LoadStories();
+        LoadInvoices();
     }
 }

@@ -1,14 +1,11 @@
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Microsoft.EntityFrameworkCore;
-using Hourglass.Data;
 using Hourglass.Models;
 
 namespace Hourglass.Views;
 
-public partial class ProjectsView : UserControl {
-    private readonly HourglassDbContext _db = new();
+public partial class ProjectsView : HourglassControl {
 
     public ProjectsView() {
         InitializeComponent();
@@ -16,7 +13,7 @@ public partial class ProjectsView : UserControl {
     }
 
     private void LoadProjects() {
-        var projects = _db.Projects.ToList();
+        var projects = db.Projects.ToList();
         ProjectsList.ItemsSource = projects;
     }
 
@@ -35,8 +32,8 @@ public partial class ProjectsView : UserControl {
             Description = description ?? string.Empty
         };
 
-        _db.Projects.Add(project);
-        _db.SaveChanges();
+        db.Projects.Add(project);
+        db.SaveChanges();
 
         ProjectNameInput.Text = string.Empty;
         InvoiceMarkerInput.Text = string.Empty;
@@ -54,8 +51,8 @@ public partial class ProjectsView : UserControl {
 
     private void DeleteProject_Click(object sender, RoutedEventArgs e) {
         if (sender is Button button && button.Tag is Project project) {
-            _db.Projects.Remove(project);
-            _db.SaveChanges();
+            db.Projects.Remove(project);
+            db.SaveChanges();
 
             LoadProjects();
         }
@@ -66,5 +63,12 @@ public partial class ProjectsView : UserControl {
             var mainWindow = (MainWindow)this.VisualRoot!;
             mainWindow.NavigateToCreateInvoice(project);
         }
+    }
+
+    public override string ViewTitle => "Overview";
+
+    public override void OnBecameActive() {
+        base.OnBecameActive();
+        LoadProjects();
     }
 }
