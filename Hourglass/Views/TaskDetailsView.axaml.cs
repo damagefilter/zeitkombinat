@@ -35,7 +35,10 @@ public partial class TaskDetailsView : HourglassControl {
         
         TaskTitle.Text = TaskItem.Name;
         TaskDescription.Text = TaskItem.Description;
-        TaskLink.Text = !string.IsNullOrEmpty(TaskItem.HyperLink) ? $"Link: {TaskItem.HyperLink}" : string.Empty;
+        TaskLinkLabel.Text = !string.IsNullOrEmpty(TaskItem.HyperLink) ? $"Link: {TaskItem.HyperLink}" : string.Empty;
+        Uri.TryCreate(TaskItem.HyperLink, UriKind.Absolute, out var uri);
+        TaskLinkButton.NavigateUri = uri;
+        TaskLinkButton.IsVisible = !string.IsNullOrEmpty(TaskItem.HyperLink);
 
         var totalSpent = TimeSpan.FromTicks(TaskItem.WorkSessions.Where(w => w.EndDate.HasValue).Sum(w => (w.EndDate!.Value - w.StartDate).Ticks));
         TaskHours.Text = $"Estimated: {TimeSpanInput.FormatTimeSpan(TaskItem.EstimatedHours)} | Spent: {TimeSpanInput.FormatTimeSpan(totalSpent)}";

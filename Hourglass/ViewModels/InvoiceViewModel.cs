@@ -1,4 +1,3 @@
-using System;
 using Hourglass.Models;
 
 namespace Hourglass.ViewModels;

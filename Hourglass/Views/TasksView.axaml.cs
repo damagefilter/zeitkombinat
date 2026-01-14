@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -9,7 +10,7 @@ namespace Hourglass.Views;
 
 public partial class TasksView : HourglassControl {
     public Story Story { get; private set; }
-
+    
     /// <summary>
     /// This is a constructor to make this view accessible for some automated and helpy systems
     /// </summary>
@@ -30,7 +31,10 @@ public partial class TasksView : HourglassControl {
         
         StoryName.Text = Story.Name;
         StoryDescription.Text = Story.Description;
-        StoryLink.Text = !string.IsNullOrEmpty(Story.HyperLink) ? $"Link: {Story.HyperLink}" : string.Empty;
+        StoryLinkLabel.Text = !string.IsNullOrEmpty(Story.HyperLink) ? $"Link: {Story.HyperLink}" : string.Empty;
+        Uri.TryCreate(Story.HyperLink, UriKind.Absolute, out var uri);
+        StoryLinkButton.NavigateUri = uri;
+        StoryLinkButton.IsVisible = !string.IsNullOrEmpty(Story.HyperLink);
     }
 
     private void RefreshStoryData() {

@@ -14,6 +14,7 @@ public class StoryViewModel {
 
     public string Name => Story.Name;
     public string Description => Story.Description;
+    public string RawLink => Story.HyperLink;
     public string LinkText => !string.IsNullOrEmpty(Story.HyperLink) ? $"Link: {Story.HyperLink}" : string.Empty;
     public bool HasLink => !string.IsNullOrEmpty(Story.HyperLink);
 

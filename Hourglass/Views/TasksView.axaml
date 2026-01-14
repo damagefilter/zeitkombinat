@@ -12,7 +12,13 @@
                     <Button Content="Edit" Click="EditStory_Click"/>
                 </StackPanel>
                 <TextBlock Name="StoryDescription"/>
-                <TextBlock Name="StoryLink"/>
+                <HyperlinkButton 
+                    Name="StoryLinkButton"
+                    NavigateUri="--" 
+                    Width="350"
+                    Padding="0 5">
+                    <TextBlock Name="StoryLinkLabel" Text="--" Margin="0" />
+                </HyperlinkButton>
             </StackPanel>
 
             <!-- Story Edit Section -->
@@ -63,7 +69,15 @@
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}" Classes="h2"/>
                                 <TextBlock Text="{Binding Description}" Margin="0,5,0,0"/>
-                                <TextBlock Text="{Binding LinkText}" IsVisible="{Binding HasLink}"/>
+                                
+                                <HyperlinkButton 
+                                    NavigateUri="{Binding RawLink}" 
+                                    Width="350"
+                                    Padding="0 5"
+                                    IsVisible="{Binding HasLink}">
+                                    <TextBlock Text="{Binding LinkText}" Margin="0" />
+                                </HyperlinkButton>
+                                
                                 <TextBlock Margin="0,5,0,0" Classes="sub" IsVisible="{Binding HasOpenSessions}">
                                     <Run Text="{Binding HoursText}" />
                                     <Run Text=" - Open Sessions: " Classes="warning" />

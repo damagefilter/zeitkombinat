@@ -12,7 +12,13 @@
                     <Button Content="Edit" Click="EditTask_Click"/>
                 </StackPanel>
                 <TextBlock Name="TaskDescription"/>
-                <TextBlock Name="TaskLink"/>
+                <HyperlinkButton 
+                    Name="TaskLinkButton"
+                    NavigateUri="--" 
+                    Width="350"
+                    Padding="0 5">
+                    <TextBlock Name="TaskLinkLabel" Text="--" Margin="0" />
+                </HyperlinkButton>
                 <TextBlock Name="TaskHours" Margin="0,10,0,0"/>
             </StackPanel>
 
