@@ -9,18 +9,18 @@ using Zeitkombinat.ViewModels;
 
 namespace Zeitkombinat.Views;
 
-public partial class TasksView : ZeitkombinatControl {
+public partial class StoryView : ZeitkombinatControl {
     public Story Story { get; private set; }
     
     /// <summary>
     /// This is a constructor to make this view accessible for some automated and helpy systems
     /// </summary>
-    public TasksView() {
+    public StoryView() {
         InitializeComponent();
         Story = new Story();
     }
     
-    public TasksView(Story story) {
+    public StoryView(Story story) {
         InitializeComponent();
         Story = story;
         LoadStoryDetails();
@@ -89,8 +89,9 @@ public partial class TasksView : ZeitkombinatControl {
 
     private void ViewTaskDetails_Click(object sender, RoutedEventArgs e) {
         if (sender is Button button && button.Tag is TaskItem task) {
-            var mainWindow = (MainWindow)this.VisualRoot!;
-            mainWindow.NavigateToTaskDetails(task);
+            // var mainWindow = (MainWindow)this.VisualRoot!;
+            // mainWindow.NavigateToTaskDetails(task);
+            TaskDetails.UpdateView(task);
         }
     }
 
@@ -137,5 +138,10 @@ public partial class TasksView : ZeitkombinatControl {
         RefreshStoryData();
         LoadStoryDetails();
         LoadTasks();
+    }
+
+    private void AddTaskToggleButton_OnClick(object? sender, RoutedEventArgs e) {
+        AddTaskForm.IsVisible = !AddTaskForm.IsVisible;
+        AddTaskToggleButton.Content = AddTaskForm.IsVisible ? "Hide" : "Add Task";
     }
 }

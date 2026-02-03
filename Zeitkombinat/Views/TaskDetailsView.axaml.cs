@@ -5,24 +5,28 @@ using Avalonia.Interactivity;
 using Microsoft.EntityFrameworkCore;
 using Zeitkombinat;
 using Zeitkombinat.Controls;
+using Zeitkombinat.Data;
 using Zeitkombinat.Models;
 
 namespace Zeitkombinat.Views;
 
-public partial class TaskDetailsView : ZeitkombinatControl {
+public partial class TaskDetailsView : UserControl {
     public TaskItem TaskItem { get; private set; }
 
+    private ZeitkombinatDbContext db;
     /// <summary>
     /// Automation ctor
     /// </summary>
     public TaskDetailsView() {
-        InitializeComponent();
+        db = new ZeitkombinatDbContext();
         TaskItem = new TaskItem();
-    }
-    public TaskDetailsView(TaskItem task) {
         InitializeComponent();
-        // This might already be fully loaded.
-        // But so far performance is fine the way it is and this is safer.
+    }
+    
+    public void UpdateView(TaskItem task) {
+        db.Dispose();
+        db = new ZeitkombinatDbContext();
+        
         TaskItem = task;
         LoadTaskDetails();
     }
@@ -146,12 +150,5 @@ public partial class TaskDetailsView : ZeitkombinatControl {
     private void CancelTaskEdit_Click(object sender, RoutedEventArgs e) {
         TaskDisplayPanel.IsVisible = true;
         TaskEditPanel.IsVisible = false;
-    }
-
-    public override string ViewTitle => $"Work Sessions for {TaskItem.Name} in {TaskItem.Story.Name} of {TaskItem.Story.Project.Name}";
-
-    public override void OnBecameActive() {
-        base.OnBecameActive();
-        LoadTaskDetails();
     }
 }

@@ -29,12 +29,7 @@ public partial class MainWindow : Window {
     }
 
     public void NavigateToTasks(Story story) {
-        var view = new TasksView(story);
-        PushView(view);
-    }
-
-    public void NavigateToTaskDetails(TaskItem task) {
-        var view = new TaskDetailsView(task);
+        var view = new StoryView(story);
         PushView(view);
     }
 
