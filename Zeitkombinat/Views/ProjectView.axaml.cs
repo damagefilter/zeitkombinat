@@ -3,24 +3,23 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.EntityFrameworkCore;
-using Zeitkombinat;
 using Zeitkombinat.Models;
 using Zeitkombinat.ViewModels;
 
 namespace Zeitkombinat.Views;
 
-public partial class StoriesView : ZeitkombinatControl {
+public partial class ProjectView : ZeitkombinatControl {
     public Project Project { get; private set; }
 
     /// <summary>
     /// This is a constructor to make this view accessible for some automated and helpy systems
     /// </summary>
-    public StoriesView() {
+    public ProjectView() {
         InitializeComponent();
         Project = new Project();
     }
     
-    public StoriesView(Project project) {
+    public ProjectView(Project project) {
         InitializeComponent();
         Project = project;
         RefreshProjectData();
@@ -79,6 +78,8 @@ public partial class StoriesView : ZeitkombinatControl {
         HyperLinkInput.Text = string.Empty;
         
         LoadStories();
+        
+        Button_OnClickShowAddStory(null, new RoutedEventArgs());
     }
 
     private void DeleteStory_Click(object sender, RoutedEventArgs e) {
@@ -151,5 +152,10 @@ public partial class StoriesView : ZeitkombinatControl {
         LoadProjectDetails();
         LoadStories();
         LoadInvoices();
+    }
+
+    private void Button_OnClickShowAddStory(object? sender, RoutedEventArgs e) {
+        AddStoryForm.IsVisible = !AddStoryForm.IsVisible;
+        ToggleAddStoryButton.Content = AddStoryForm.IsVisible ? "Hide" : "Add Story";
     }
 }

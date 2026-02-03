@@ -19,12 +19,12 @@ public partial class MainWindow : Window {
 
     public void NavigateToProjects() {
         _navigationStack.Clear();
-        var view = new ProjectsView();
+        var view = new Overview();
         PushView(view);
     }
 
     public void NavigateToStories(Project project) {
-        var view = new StoriesView(project);
+        var view = new ProjectView(project);
         PushView(view);
     }
 

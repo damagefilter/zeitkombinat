@@ -31,5 +31,7 @@
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Views\ProjectsView.axaml" />
+      <UpToDateCheckInput Remove="Views\Components\StoryCardView.axaml" />
+      <UpToDateCheckInput Remove="Views\Components\StoryViewCard.axaml" />
     </ItemGroup>
 </Project>

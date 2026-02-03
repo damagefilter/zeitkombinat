@@ -6,9 +6,9 @@ using Zeitkombinat.Models;
 
 namespace Zeitkombinat.Views;
 
-public partial class ProjectsView : ZeitkombinatControl {
+public partial class Overview : ZeitkombinatControl {
 
-    public ProjectsView() {
+    public Overview() {
         InitializeComponent();
         LoadProjects();
     }
