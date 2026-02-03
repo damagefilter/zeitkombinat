@@ -11,5 +11,8 @@ public class TaskItem {
     public TimeSpan EstimatedHours { get; set; }
     public int StoryId { get; set; }
     public Story Story { get; set; } = null!;
+    
+    public bool IsDone { get; set; }
+    
     public List<WorkSession> WorkSessions { get; set; } = new();
 }

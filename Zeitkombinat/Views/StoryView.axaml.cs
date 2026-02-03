@@ -48,7 +48,26 @@ public partial class StoryView : ZeitkombinatControl {
     }
 
     private void LoadTasks() {
-        TasksList.ItemsSource = Story.Tasks.Select(t => new TaskViewModel(t)).ToList();
+        FilterTasks();
+    }
+
+    private void FilterTasks() {
+        var searchText = SearchTextBox?.Text?.Trim().ToLowerInvariant() ?? string.Empty;
+        var showCompleted = ShowCompletedCheckBox?.IsChecked ?? false;
+
+        var filteredTasks = Story.Tasks.AsEnumerable();
+
+        if (!showCompleted) {
+            filteredTasks = filteredTasks.Where(t => !t.IsDone);
+        }
+
+        if (!string.IsNullOrEmpty(searchText)) {
+            filteredTasks = filteredTasks.Where(t =>
+                t.Name.ToLowerInvariant().Contains(searchText) ||
+                t.Description.ToLowerInvariant().Contains(searchText));
+        }
+
+        TasksList.ItemsSource = filteredTasks.Select(t => new TaskViewModel(t)).ToList();
     }
 
     private void AddTask_Click(object sender, RoutedEventArgs e) {
@@ -143,5 +162,25 @@ public partial class StoryView : ZeitkombinatControl {
     private void AddTaskToggleButton_OnClick(object? sender, RoutedEventArgs e) {
         AddTaskForm.IsVisible = !AddTaskForm.IsVisible;
         AddTaskToggleButton.Content = AddTaskForm.IsVisible ? "Hide" : "Add Task";
+    }
+
+    private void SearchTextBox_OnTextChanged(object? sender, TextChangedEventArgs e) {
+        FilterTasks();
+    }
+
+    private void ShowCompletedCheckBox_OnClick(object? sender, RoutedEventArgs e) {
+        FilterTasks();
+    }
+
+    private void TaskDoneCheckBox_OnClick(object? sender, RoutedEventArgs e) {
+        if (sender is CheckBox checkBox && checkBox.Tag is TaskItem task) {
+            var dbTask = db.Tasks.Find(task.Id);
+            if (dbTask != null) {
+                dbTask.IsDone = checkBox.IsChecked ?? false;
+                db.SaveChanges();
+                task.IsDone = dbTask.IsDone;
+                FilterTasks();
+            }
+        }
     }
 }

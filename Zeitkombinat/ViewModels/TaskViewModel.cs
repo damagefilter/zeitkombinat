@@ -18,6 +18,7 @@ public class TaskViewModel {
     public string LinkText => !string.IsNullOrEmpty(Task.HyperLink) ? $"Link: {Task.HyperLink}" : string.Empty;
     public bool HasLink => !string.IsNullOrEmpty(Task.HyperLink);
     public bool HasOpenSessions => Task.WorkSessions.Any(x => !x.EndDate.HasValue);
+    public bool IsDone => Task.IsDone;
     
     public string OpenSessionsDuration {
         get {
