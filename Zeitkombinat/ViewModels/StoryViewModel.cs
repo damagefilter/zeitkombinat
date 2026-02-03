@@ -18,12 +18,26 @@ public class StoryViewModel {
     public string LinkText => !string.IsNullOrEmpty(Story.HyperLink) ? $"Link: {Story.HyperLink}" : string.Empty;
     public bool HasLink => !string.IsNullOrEmpty(Story.HyperLink);
 
-    public string SummaryText {
+    public string TotalEstimatedTime {
         get {
             var totalEstimated = TimeSpan.FromTicks(Story.Tasks.Sum(t => t.EstimatedHours.Ticks));
+            return $"Total Estimated: {TimeSpanInput.FormatTimeSpan(totalEstimated)}";
+        }
+    }
+    
+    public string TotalSpentTime {
+        get {
             var totalSpent = TimeSpan.FromTicks(Story.Tasks.Sum(t =>
                 t.WorkSessions.Where(w => w.EndDate.HasValue).Sum(w => (w.EndDate!.Value - w.StartDate).Ticks)));
-            return $"Total Estimated: {TimeSpanInput.FormatTimeSpan(totalEstimated)} | Total Spent: {TimeSpanInput.FormatTimeSpan(totalSpent)}";
+            return $"Total Spent: {TimeSpanInput.FormatTimeSpan(totalSpent)}";
+        }
+    }
+    
+    public string TotalUnbilledTime {
+        get {
+            var totalUnbilled = TimeSpan.FromTicks(Story.Tasks.Sum(t =>
+                t.WorkSessions.Where(w => w.EndDate.HasValue && !w.Billed).Sum(w => (w.EndDate!.Value - w.StartDate).Ticks)));
+            return $"Total Unbilled: {TimeSpanInput.FormatTimeSpan(totalUnbilled)}";
         }
     }
 }

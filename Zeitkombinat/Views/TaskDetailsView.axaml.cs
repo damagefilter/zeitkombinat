@@ -46,7 +46,8 @@ public partial class TaskDetailsView : UserControl {
         TaskLinkButton.IsVisible = !string.IsNullOrEmpty(TaskItem.HyperLink);
 
         var totalSpent = TimeSpan.FromTicks(TaskItem.WorkSessions.Where(w => w.EndDate.HasValue).Sum(w => (w.EndDate!.Value - w.StartDate).Ticks));
-        TaskHours.Text = $"Estimated: {TimeSpanInput.FormatTimeSpan(TaskItem.EstimatedHours)} | Spent: {TimeSpanInput.FormatTimeSpan(totalSpent)}";
+        var totalUnbilled = TimeSpan.FromTicks(TaskItem.WorkSessions.Where(w => w.EndDate.HasValue && !w.Billed).Sum(w => (w.EndDate!.Value - w.StartDate).Ticks));
+        TaskHours.Text = $"Estimated: {TimeSpanInput.FormatTimeSpan(TaskItem.EstimatedHours)} | Spent: {TimeSpanInput.FormatTimeSpan(totalSpent)} | Unbilled: {TimeSpanInput.FormatTimeSpan(totalUnbilled)}";
 
         LoadSessions();
     }

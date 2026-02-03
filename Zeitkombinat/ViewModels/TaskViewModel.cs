@@ -41,4 +41,24 @@ public class TaskViewModel {
             return $"Estimated: {TimeSpanInput.FormatTimeSpan(Task.EstimatedHours)} | Spent: {TimeSpanInput.FormatTimeSpan(totalSpent)}";
         }
     }
+    
+    public string TotalEstimatedTime => $"Total Estimated: {TimeSpanInput.FormatTimeSpan(Task.EstimatedHours)}";
+
+    public string TotalSpentTime {
+        get {
+            var totalSpent = TimeSpan.FromTicks(Task.WorkSessions
+                .Where(w => w.EndDate.HasValue)
+                .Sum(w => (w.EndDate!.Value - w.StartDate).Ticks));
+            return $"Total Spent: {TimeSpanInput.FormatTimeSpan(totalSpent)}";
+        }
+    }
+    
+    public string TotalUnbilledTime {
+        get {
+            var totalUnbilled = TimeSpan.FromTicks(Task.WorkSessions
+                .Where(w => w.EndDate.HasValue && !w.Billed)
+                .Sum(w => (w.EndDate!.Value - w.StartDate).Ticks));
+            return $"Total Unbilled: {TimeSpanInput.FormatTimeSpan(totalUnbilled)}";
+        }
+    }
 }
