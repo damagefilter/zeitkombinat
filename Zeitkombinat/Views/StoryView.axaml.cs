@@ -28,6 +28,7 @@ public partial class StoryView : ZeitkombinatControl {
     }
 
     private void LoadStoryDetails() {
+        TaskDetails.IsVisible = false;
         RefreshStoryData();
         
         StoryName.Text = Story.Name;
@@ -89,9 +90,8 @@ public partial class StoryView : ZeitkombinatControl {
 
     private void ViewTaskDetails_Click(object sender, RoutedEventArgs e) {
         if (sender is Button button && button.Tag is TaskItem task) {
-            // var mainWindow = (MainWindow)this.VisualRoot!;
-            // mainWindow.NavigateToTaskDetails(task);
             TaskDetails.UpdateView(task);
+            TaskDetails.IsVisible = true;
         }
     }
 
