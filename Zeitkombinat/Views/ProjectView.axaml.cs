@@ -103,6 +103,7 @@ public partial class ProjectView : ZeitkombinatControl {
         ProjectNameEdit.Text = Project.Name;
         ProjectDescriptionEdit.Text = Project.Description;
         ProjectInvoiceMarkerEdit.Text = Project.InvoiceMarker;
+        ProjectCurrencyEdit.Text = Project.CurrencySymbol;
 
         ProjectDisplayPanel.IsVisible = false;
         ProjectEditPanel.IsVisible = true;
@@ -117,6 +118,7 @@ public partial class ProjectView : ZeitkombinatControl {
             dbProject.Name = name;
             dbProject.Description = ProjectDescriptionEdit.Text?.Trim() ?? string.Empty;
             dbProject.InvoiceMarker = ProjectInvoiceMarkerEdit.Text?.Trim() ?? string.Empty;
+            dbProject.CurrencySymbol = ProjectCurrencyEdit.Text?.Trim() ?? "€";
             db.SaveChanges();
 
             Project.Name = dbProject.Name;

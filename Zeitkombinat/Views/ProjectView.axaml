@@ -17,19 +17,20 @@
             <!-- Project Edit Section -->
             <StackPanel Name="ProjectEditPanel" Spacing="5" Margin="0,0,0,20" IsVisible="False">
                 <TextBlock Text="Edit Project" FontSize="18" FontWeight="Bold" />
-                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="0,10,0,0">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" Margin="0,10,0,0">
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <TextBox Grid.Row="0" Grid.Column="1" Name="ProjectNameEdit" Margin="0,0,0,5" />
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Description:" VerticalAlignment="Center"
-                               Margin="0,0,10,0" />
+                    
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Description:" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <TextBox Grid.Row="1" Grid.Column="1" Name="ProjectDescriptionEdit" Margin="0,0,0,5" />
-
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Invoice Marker:" VerticalAlignment="Center"
-                               Margin="0,0,10,0" />
+                    
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Invoice Marker:" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <TextBox Grid.Row="2" Grid.Column="1" Name="ProjectInvoiceMarkerEdit" Margin="0,0,0,5" />
+                    
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Currency Symbol:" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBox Grid.Row="3" Grid.Column="1" Name="ProjectCurrencyEdit" Margin="0,0,0,5" Text="€"/>
 
-                    <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                    <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="Save" Click="SaveProject_Click" />
                         <Button Content="Cancel" Click="CancelProjectEdit_Click" />
                     </StackPanel>

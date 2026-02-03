@@ -11,6 +11,6 @@ public class InvoiceViewModel {
 
     public string BillingId => Invoice.BillingId;
     public string CreationDateText => $"Date: {Invoice.CreationDate:yyyy-MM-dd}";
-    public string HourlyRateText => $"Hourly Rate: ${Invoice.HourlyRate:F2}";
-    public string TotalAmountText => $"Total: ${Invoice.TotalAmount:F2}";
+    public string HourlyRateText => $"Hourly Rate in {Invoice.Project.CurrencySymbol}: {Invoice.HourlyRate:F2}";
+    public string TotalAmountText => $"Total in {Invoice.Project.CurrencySymbol}: {Invoice.TotalAmount:F2}";
 }
