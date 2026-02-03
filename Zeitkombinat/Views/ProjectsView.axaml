@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="using:Zeitkombinat.Models"
+             x:Class="Zeitkombinat.Views.ProjectsView">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Top" Spacing="10" Margin="0,0,0,20">
+            <TextBlock Text="Add New Project" FontWeight="Bold" Classes="h1"/>
+            <Grid ColumnDefinitions="Auto,*"
+                  RowDefinitions="Auto,Auto,Auto,Auto">
+
+                <!-- Labels -->
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="Name:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,10,5"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Text="Invoice Marker:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,10,5"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0"
+                           Text="Description:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,10,5"/>
+
+                <!-- Inputs -->
+                <TextBox Grid.Row="0" Grid.Column="1"
+                         Name="ProjectNameInput"
+                         Watermark="Project name"
+                         Margin="0,0,10,5"/>
+
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Name="InvoiceMarkerInput"
+                         Watermark="Unique invoice ID"
+                         Margin="0,0,10,5"/>
+
+                <TextBox Grid.Row="2" Grid.Column="1"
+                         Name="DescriptionInput"
+                         Watermark="Project description"
+                         Margin="0,0,10,5"/>
+
+                <!-- Button -->
+                <Button Grid.Row="3" Grid.Column="1"
+                        Content="Add Project"
+                        Click="AddProject_Click"
+                        HorizontalAlignment="Left"
+                        Margin="0,5,0,0"/>
+            </Grid>
+        </StackPanel>
+
+        <ScrollViewer>
+            <ItemsControl Name="ProjectsList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:Project">
+                        <Border BorderThickness="1" Margin="0,5" Padding="10">
+                            <StackPanel>
+                                <TextBlock Classes="h2">
+                                    <Run Text="{Binding Name}"></Run>
+                                    <Run Text=" ("></Run>
+                                    <Run Text="{Binding InvoiceMarker}"></Run>
+                                    <Run Text=")"></Run>
+                                </TextBlock>
+                                
+                                <TextBlock Text="{Binding Description}" Margin="0,5,0,0" Classes="sub"/>
+                                <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                                    <Button Content="View Stories" Click="ViewStories_Click" Tag="{Binding}" HorizontalAlignment="Left"/>
+                                    <Button Content="Create Invoice" Click="CreateInvoice_Click" Tag="{Binding}" HorizontalAlignment="Left"/>
+                                    <Button Content="Delete" Click="DeleteProject_Click" Tag="{Binding}" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
