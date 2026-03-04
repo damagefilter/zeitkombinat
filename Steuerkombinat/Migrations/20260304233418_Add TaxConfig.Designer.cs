@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Steuerkombinat.Data;
 
@@ -10,9 +11,11 @@ using Steuerkombinat.Data;
 namespace Steuerkombinat.Migrations
 {
     [DbContext(typeof(SteuerkombinatDbContext))]
-    partial class SteuerkombinatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260304233418_Add TaxConfig")]
+    partial class AddTaxConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.11");

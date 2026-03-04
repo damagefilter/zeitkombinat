@@ -22,6 +22,9 @@ public partial class MainWindowViewModel : ViewModelBase {
     [NotifyPropertyChangedFor(nameof(TotalAfterDeductions))]
     private string invoiceNumber = string.Empty;
 
+    [ObservableProperty]
+    private decimal currentKv;
+
     public ObservableCollection<Invoice> Invoices { get; } = [];
 
     public decimal Kv => (InvoiceAmount) * 0.19m;
@@ -55,7 +58,12 @@ public partial class MainWindowViewModel : ViewModelBase {
     public decimal YearlyTotalAfterDeductions => YearlyTotal - YearlyKv - YearlyEks;
 
     public MainWindowViewModel() {
+        LoadConfig();
         LoadInvoices();
+    }
+
+    partial void OnCurrentKvChanged(decimal value) {
+        SaveConfig();
     }
 
     [RelayCommand]
@@ -83,6 +91,27 @@ public partial class MainWindowViewModel : ViewModelBase {
         db.SaveChanges();
 
         LoadInvoices();
+    }
+
+    private void LoadConfig() {
+        using var db = new SteuerkombinatDbContext();
+        var config = db.TaxConfigs.FirstOrDefault();
+        if (config == null) {
+            // Create default config
+            config = new TaxConfig { CurrentKv = 0 };
+            db.TaxConfigs.Add(config);
+            db.SaveChanges();
+        }
+        CurrentKv = config.CurrentKv;
+    }
+
+    private void SaveConfig() {
+        using var db = new SteuerkombinatDbContext();
+        var config = db.TaxConfigs.FirstOrDefault();
+        if (config != null) {
+            config.CurrentKv = CurrentKv;
+            db.SaveChanges();
+        }
     }
 
     private void LoadInvoices() {

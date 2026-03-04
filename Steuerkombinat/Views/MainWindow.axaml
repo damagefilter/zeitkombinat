@@ -24,6 +24,9 @@
 
         <!-- Left side: Input section -->
         <StackPanel Grid.Column="0">
+            <TextBlock Text="Current KV (Monthly):" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding CurrentKv}" Width="200" Margin="0,0,0,30"/>
+
             <TextBlock Text="Invoice Amount (Euro):" Margin="0,0,0,5"/>
             <TextBox Text="{Binding InvoiceAmount}" Width="200" Margin="0,0,0,15"/>
 
