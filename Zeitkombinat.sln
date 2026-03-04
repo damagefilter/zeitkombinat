@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeitkombinat", "Zeitkombinat\Zeitkombinat.csproj", "{5992EB08-284F-4595-AA24-C99F0338938F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steuerkombinat", "Steuerkombinat\Steuerkombinat.csproj", "{F9C18054-7848-48F0-A55A-926D7229FB1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{5992EB08-284F-4595-AA24-C99F0338938F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5992EB08-284F-4595-AA24-C99F0338938F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5992EB08-284F-4595-AA24-C99F0338938F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9C18054-7848-48F0-A55A-926D7229FB1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9C18054-7848-48F0-A55A-926D7229FB1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9C18054-7848-48F0-A55A-926D7229FB1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9C18054-7848-48F0-A55A-926D7229FB1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,115 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Steuerkombinat.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Steuerkombinat.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Steuerkombinat">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left side: Input section -->
+        <StackPanel Grid.Column="0">
+            <TextBlock Text="Invoice Amount (Euro):" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding InvoiceAmount}" Width="200" Margin="0,0,0,15"/>
+
+            <TextBlock Text="Invoice Number:" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding InvoiceNumber}" Width="200" Margin="0,0,0,30"/>
+
+            <StackPanel Margin="0,0,0,15">
+                <TextBlock Margin="0,0,0,5">
+                    <Run Text="KV: "/>
+                    <Run Text="{Binding Kv, StringFormat={}{0:F2}}"/>
+                    <Run Text=" €"/>
+                </TextBlock>
+
+                <TextBlock Margin="0,0,0,5">
+                    <Run Text="EKS: "/>
+                    <Run Text="{Binding Eks, StringFormat={}{0:F2}}"/>
+                    <Run Text=" €"/>
+                </TextBlock>
+                
+                <TextBlock Margin="0,0,0,5">
+                    <Run Text="Total Free: "/>
+                    <Run Text="{Binding TotalAfterDeductions, StringFormat={}{0:F2}}"/>
+                    <Run Text=" €"/>
+                </TextBlock>
+            </StackPanel>
+
+            <Button Content="Add" Command="{Binding AddInvoiceCommand}" Width="200"/>
+
+            <TextBlock Text="Yearly Total" FontWeight="Bold" FontSize="16" Margin="0,30,0,10"/>
+            <StackPanel>
+                <TextBlock Margin="0,0,0,5">
+                    <Run Text="Total: "/>
+                    <Run Text="{Binding YearlyTotal, StringFormat={}{0:F2}}"/>
+                    <Run Text=" €"/>
+                </TextBlock>
+
+                <TextBlock Margin="0,0,0,5">
+                    <Run Text="KV: "/>
+                    <Run Text="{Binding YearlyKv, StringFormat={}{0:F2}}"/>
+                    <Run Text=" €"/>
+                </TextBlock>
+
+                <TextBlock Margin="0,0,0,5">
+                    <Run Text="EKS: "/>
+                    <Run Text="{Binding YearlyEks, StringFormat={}{0:F2}}"/>
+                    <Run Text=" €"/>
+                </TextBlock>
+                
+                <TextBlock Margin="0,0,0,5">
+                    <Run Text="Total Free: "/>
+                    <Run Text="{Binding YearlyTotalAfterDeductions, StringFormat={}{0:F2}}"/>
+                    <Run Text=" €"/>
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Right side: Invoices list -->
+        <ScrollViewer Grid.Column="2">
+            <ItemsControl ItemsSource="{Binding Invoices}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding InvoiceNumber}" FontWeight="Bold" Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding Date, StringFormat='Date: {0:dd.MM.yyyy HH:mm}'}" Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding Amount, StringFormat='Amount: {0:F2} €'}"/>
+                                </StackPanel>
+
+                                <Button Grid.Column="1"
+                                        Content="Delete"
+                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteInvoiceCommand}"
+                                        CommandParameter="{Binding}"
+                                        VerticalAlignment="Center"
+                                        Margin="10,0,0,0"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+
+</Window>
