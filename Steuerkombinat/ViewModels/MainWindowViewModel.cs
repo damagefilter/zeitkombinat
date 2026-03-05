@@ -13,19 +13,38 @@ public partial class MainWindowViewModel : ViewModelBase {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Kv))]
     [NotifyPropertyChangedFor(nameof(Eks))]
-    [NotifyPropertyChangedFor(nameof(TotalAfterDeductions))]
+    [NotifyPropertyChangedFor(nameof(MaxPayout))]
     private decimal invoiceAmount;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Kv))]
     [NotifyPropertyChangedFor(nameof(Eks))]
-    [NotifyPropertyChangedFor(nameof(TotalAfterDeductions))]
+    [NotifyPropertyChangedFor(nameof(MaxPayout))]
     private string invoiceNumber = string.Empty;
 
     [ObservableProperty]
     private decimal currentKv;
 
+    [ObservableProperty]
+    private Invoice? selectedInvoice;
+
     public ObservableCollection<Invoice> Invoices { get; } = [];
+
+    public decimal SelectedInvoiceAmount => SelectedInvoice?.Amount ?? 0;
+
+    public decimal SelectedKv => SelectedInvoiceAmount * 0.19m;
+
+    public decimal SelectedEks {
+        get {
+            if (SelectedInvoice == null) return 0;
+            var taxableIncome = (SelectedInvoiceAmount * 12) - (SelectedKv * 12);
+            var taxConfig = TaxConfigFactory.GetConfig(DateTime.Now.Year);
+            var tax = taxConfig.CalculateTax(taxableIncome);
+            return tax / 12;
+        }
+    }
+
+    public decimal SelectedMaxPayout => SelectedInvoiceAmount - SelectedEks - SelectedKv + CurrentKv;
 
     public decimal Kv => (InvoiceAmount) * 0.19m;
 
@@ -38,7 +57,7 @@ public partial class MainWindowViewModel : ViewModelBase {
         }
     }
 
-    public decimal TotalAfterDeductions => ((InvoiceAmount) - Kv - Eks);
+    public decimal MaxPayout => ((InvoiceAmount) - Kv - Eks) + CurrentKv;
 
     public decimal YearlyTotal => Invoices
         .Where(i => i.Date.Year == DateTime.Now.Year)
@@ -55,8 +74,6 @@ public partial class MainWindowViewModel : ViewModelBase {
         }
     }
 
-    public decimal YearlyTotalAfterDeductions => YearlyTotal - YearlyKv - YearlyEks;
-
     public MainWindowViewModel() {
         LoadConfig();
         LoadInvoices();
@@ -64,6 +81,14 @@ public partial class MainWindowViewModel : ViewModelBase {
 
     partial void OnCurrentKvChanged(decimal value) {
         SaveConfig();
+        OnPropertyChanged(nameof(SelectedMaxPayout));
+    }
+
+    partial void OnSelectedInvoiceChanged(Invoice? value) {
+        OnPropertyChanged(nameof(SelectedInvoiceAmount));
+        OnPropertyChanged(nameof(SelectedKv));
+        OnPropertyChanged(nameof(SelectedEks));
+        OnPropertyChanged(nameof(SelectedMaxPayout));
     }
 
     [RelayCommand]
@@ -85,10 +110,19 @@ public partial class MainWindowViewModel : ViewModelBase {
     }
 
     [RelayCommand]
+    private void SelectInvoice(Invoice invoice) {
+        SelectedInvoice = invoice;
+    }
+
+    [RelayCommand]
     private void DeleteInvoice(Invoice invoice) {
         using var db = new SteuerkombinatDbContext();
         db.Invoices.Remove(invoice);
         db.SaveChanges();
+
+        if (SelectedInvoice?.Id == invoice.Id) {
+            SelectedInvoice = null;
+        }
 
         LoadInvoices();
     }
@@ -125,6 +159,5 @@ public partial class MainWindowViewModel : ViewModelBase {
         OnPropertyChanged(nameof(YearlyTotal));
         OnPropertyChanged(nameof(YearlyKv));
         OnPropertyChanged(nameof(YearlyEks));
-        OnPropertyChanged(nameof(YearlyTotalAfterDeductions));
     }
 }
